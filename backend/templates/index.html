@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deepfake Detector AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600&family=Sora&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #0d0b2f;
+      font-family: 'Sora', sans-serif;
+      color: #fefeff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px rgba(203, 160, 255, 0.2);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 40px;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      animation: fadeSlide 1.2s ease-out;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 30px;
+      letter-spacing: 1.5px;
+      margin-bottom: 15px;
+      color: #cba0ff;
+      text-shadow: 0 0 10px #cba0ff;
+    }
+
+    p {
+      font-size: 14px;
+      color: #a0d2eb;
+      margin-bottom: 25px;
+    }
+
+    .file-input {
+      border: 2px dashed #cba0ff;
+      padding: 25px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #cba0ff;
+      margin-bottom: 20px;
+    }
+
+    .file-input:hover {
+      background-color: rgba(203, 160, 255, 0.05);
+      border-color: #e0c9ff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 12px 36px;
+      background-color: #cba0ff;
+      color: #0d0b2f;
+      font-weight: bold;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 20px #cba0ff;
+      transition: all 0.3s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #b88bff;
+      box-shadow: 0 0 35px #d2b1ff;
+      transform: scale(1.05);
+    }
+
+    .result {
+      margin-top: 25px;
+      font-size: 18px;
+      color: #fefeff;
+      animation: glowText 1.5s ease-in-out;
+      text-shadow: 0 0 8px #cba0ff;
+    }
+
+    @keyframes glowText {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .preview-img {
+      margin-top: 20px;
+      width: 180px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #cba0ff;
+      transition: transform 0.3s ease;
+    }
+
+    .preview-img:hover {
+      transform: scale(1.02);
+    }
+
+    .confidence-wrapper {
+      margin-top: 20px;
+    }
+
+    .confidence-label {
+      color: #a0d2eb;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .confidence-bar-bg {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      height: 20px;
+      overflow: hidden;
+    }
+
+    .confidence-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, #cba0ff, #e0c9ff);
+      width: 0%;
+      animation: growBar 1.5s ease-out forwards;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: #0d0b2f;
+    }
+
+    @keyframes growBar {
+      from { width: 0; }
+      to   { width: var(--bar-width); }
+    }
+
+    @media (max-width: 480px) {
+      .glass {
+        padding: 25px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .preview-img {
+        width: 100%;
+        max-width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glass">
+    <h1>🤖 Deepfake Detector AI</h1>
+    <p>Upload a face image and let the AI detect its authenticity</p>
+
+    <form method="POST" enctype="multipart/form-data">
+      <label class="file-input">
+        <input type="file" name="file" onchange="previewAndSubmit(this)" />
+        Click or drag image to upload
+      </label>
+      <button type="submit">Analyze</button>
+    </form>
+
+    {% if prediction %}
+      <div class="result">Prediction: {{ prediction }}</div>
+
+      {% if confidence %}
+        <div class="confidence-wrapper">
+          <div class="confidence-label">Confidence Score</div>
+          <div class="confidence-bar-bg">
+            <div class="confidence-bar-fill" style="--bar-width: {{ confidence }}%">{{ confidence }}%</div>
+          </div>
+        </div>
+      {% endif %}
+
+      <img src="{{ url_for('static', filename='uploaded.jpg') }}" alt="Preview" class="preview-img" />
+    {% endif %}
+  </div>
+
+  <script>
+    function previewAndSubmit(input) {
+      const file = input.files[0];
+      if (file) {
+        document.forms[0].submit();
+      }
+    }
+  </script>
+</body>
+</html>

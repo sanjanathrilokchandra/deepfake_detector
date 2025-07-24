@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: deepfake-detector
+    env: python
+    buildCommand: ""
+    startCommand: python backend/app.py
+    plan: free
