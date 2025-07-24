@@ -1,0 +1,17 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.env
+
+# OS
+.DS_Store
+
+# TensorFlow / model files
+*.h5
+
+# IDE
+.idea/
+.vscode/
